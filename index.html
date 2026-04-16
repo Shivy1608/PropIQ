@@ -1,0 +1,457 @@
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bg4:#2d333b;
+--bd:rgba(255,255,255,0.07);--bd2:rgba(255,255,255,0.13);
+--t1:#e6edf3;--t2:#8b949e;--t3:#484f58;
+--acc:#2dd4aa;--acc2:rgba(45,212,170,0.12);
+--ok:#3fb950;--ok2:rgba(63,185,80,0.12);
+--wn:#d29922;--wn2:rgba(210,153,34,0.12);
+--err:#f85149;--err2:rgba(248,81,73,0.12);
+--inf:#58a6ff;--inf2:rgba(88,166,255,0.12);
+--ff:'DM Sans',system-ui,sans-serif;--fm:'DM Mono',monospace;
+}
+html,body{font-family:var(--ff);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.5}
+.shell{container-type:inline-size;container-name:shell;background:var(--bg);width:100%;overflow:hidden}
+.topbar{display:flex;flex-direction:column;gap:10px;padding:14px 14px 12px;border-bottom:1px solid var(--bd)}
+@container shell (min-width:440px){.topbar{flex-direction:row;align-items:center;justify-content:space-between}}
+.logo{display:flex;align-items:center;gap:9px}
+.lmark{width:30px;height:30px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lmark svg{width:17px;height:17px}
+.ltxt{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.ltag{font-size:10px;color:var(--t2);letter-spacing:.04em;text-transform:uppercase;margin-top:1px}
+.csel-wrap{position:relative;width:100%}
+@container shell (min-width:440px){.csel-wrap{width:auto;min-width:190px}}
+.csel{width:100%;-webkit-appearance:none;appearance:none;background:var(--bg3);border:1px solid var(--bd2);border-radius:8px;color:var(--t1);font-family:var(--ff);font-size:14px;padding:9px 34px 9px 12px;cursor:pointer;height:40px}
+.csel:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc2)}
+.csel option{background:#1c2128;color:var(--t1)}
+.csarr{position:absolute;right:11px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--t2);font-size:11px}
+.tabbar{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--bd);padding:0 10px}
+.tabbar::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:5px;padding:11px 12px;font-size:12px;font-weight:500;white-space:nowrap;border:none;border-bottom:2px solid transparent;background:none;color:var(--t2);cursor:pointer;flex-shrink:0;margin-bottom:-1px;transition:color .15s,border-color .15s}
+.tab svg{width:13px;height:13px;flex-shrink:0;fill:currentColor;opacity:.7}
+.tab.active{color:var(--acc);border-bottom-color:var(--acc)}
+.tab.active svg{opacity:1}
+.tab:not(.active):hover{color:var(--t1)}
+.panel{display:none;padding:14px}.panel.active{display:block}
+.g2{display:grid;grid-template-columns:1fr;gap:14px}
+@container shell (min-width:600px){.g2{grid-template-columns:1fr 1fr;gap:0}.left-col{padding-right:16px}.right-col{padding-left:16px;border-left:1px solid var(--bd)}}
+.sh{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
+.fld{margin-bottom:11px}
+.frow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.flbl{font-size:12px;color:var(--t2);flex:1;min-width:0}
+.cin{display:flex;align-items:stretch;height:34px;flex-shrink:0}
+.cin-sym{display:flex;align-items:center;padding:0 7px;background:var(--bg3);border:1px solid var(--bd2);border-right:none;border-radius:6px 0 0 6px;font-size:11px;color:var(--t2);white-space:nowrap;font-family:var(--fm)}
+.cin-n{width:80px;border:1px solid var(--bd2);border-left:none;border-radius:0 6px 6px 0;background:var(--bg2);color:var(--t1);font-size:14px;font-family:var(--fm);padding:0 7px;text-align:right;outline:none;-moz-appearance:textfield}
+.cin-n:focus{border-color:var(--acc);background:var(--bg3)}
+.pin{display:flex;align-items:stretch;height:34px;flex-shrink:0}
+.pin-n{width:52px;border:1px solid var(--bd2);border-right:none;border-radius:6px 0 0 6px;background:var(--bg2);color:var(--t1);font-size:14px;font-family:var(--fm);padding:0 7px;text-align:right;outline:none;-moz-appearance:textfield}
+.pin-n:focus{border-color:var(--acc);background:var(--bg3)}
+.pin-sfx{display:flex;align-items:center;padding:0 7px;background:var(--bg3);border:1px solid var(--bd2);border-left:none;border-radius:0 6px 6px 0;font-size:11px;color:var(--t2);font-family:var(--fm)}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;background:var(--bg4);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--acc);cursor:pointer;touch-action:none}
+input[type=range]:active::-webkit-slider-thumb{box-shadow:0 0 0 8px var(--acc2)}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border:none;border-radius:50%;background:var(--acc);cursor:pointer}
+.mc{display:grid;gap:8px;margin-bottom:12px}
+.mc2{grid-template-columns:1fr 1fr}
+.mc3{grid-template-columns:1fr 1fr}
+@container shell (min-width:500px){.mc3{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:11px 13px;min-width:0;overflow:hidden}
+.card-l{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);margin-bottom:3px;font-weight:600}
+.card-v{font-size:15px;font-weight:600;font-family:var(--fm);color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-s{font-size:10px;color:var(--t3);margin-top:2px;line-height:1.4}
+.card.ca{background:var(--acc2);border-color:rgba(45,212,170,.2)}.card.ca .card-l{color:rgba(45,212,170,.6)}.card.ca .card-v{color:var(--acc)}
+.card.ok{background:var(--ok2);border-color:rgba(63,185,80,.2)}.card.ok .card-l{color:rgba(63,185,80,.6)}.card.ok .card-v{color:var(--ok)}
+.card.wn{background:var(--wn2);border-color:rgba(210,153,34,.2)}.card.wn .card-l{color:rgba(210,153,34,.6)}.card.wn .card-v{color:var(--wn)}
+.card.er{background:var(--err2);border-color:rgba(248,81,73,.2)}.card.er .card-l{color:rgba(248,81,73,.6)}.card.er .card-v{color:var(--err)}
+.card.in{background:var(--inf2);border-color:rgba(88,166,255,.2)}.card.in .card-l{color:rgba(88,166,255,.6)}.card.in .card-v{color:var(--inf)}
+.acq{background:var(--acc2);border:1px solid rgba(45,212,170,.2);border-radius:10px;padding:12px 13px;margin-bottom:12px}
+.acq-l{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:rgba(45,212,170,.6);font-weight:600;margin-bottom:3px}
+.acq-v{font-size:17px;font-weight:700;font-family:var(--fm);color:var(--acc)}
+.acq-s{font-size:10px;color:rgba(45,212,170,.5);margin-top:3px;line-height:1.5;word-break:break-word}
+.seg{display:flex;gap:3px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;padding:3px;margin-bottom:10px}
+.seg-b{flex:1;padding:7px 6px;font-size:12px;font-weight:500;border:none;border-radius:6px;background:none;color:var(--t2);cursor:pointer;text-align:center;transition:all .15s;white-space:nowrap}
+.seg-b.active{background:var(--bg);color:var(--t1);box-shadow:0 1px 4px rgba(0,0,0,.5)}
+.dv{border:none;border-top:1px solid var(--bd);margin:13px 0}
+.tnote{font-size:10px;color:var(--t3);line-height:1.6;padding:10px 12px;background:var(--bg3);border-radius:8px;border-left:2px solid var(--bd2);margin-top:8px}
+.verd{background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:12px}
+.verd-tag{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);font-weight:600;margin-bottom:4px}
+.verd-val{font-size:15px;font-weight:700;margin-bottom:4px}
+.verd-sub{font-size:11px;color:var(--t2);line-height:1.6}
+.leg{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.leg-i{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2)}
+.leg-d{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.brow{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.blbl{font-size:10px;color:var(--t2);width:100px;text-align:right;flex-shrink:0;line-height:1.3}
+.btrack{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;min-width:0}
+.bfill{height:100%;border-radius:3px;transition:width .5s ease}
+.bval{font-size:10px;font-family:var(--fm);font-weight:500;color:var(--t1);width:72px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cw{position:relative;width:100%}
+.assump{background:var(--bg3);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:10px;color:var(--t3);line-height:1.7;border-left:2px solid var(--bd2)}
+.assump strong{color:var(--t2);font-weight:600}
+#gst-seg{display:none;margin-bottom:10px}
+</style>
+
+<div class="shell">
+<div class="topbar">
+  <div class="logo">
+    <div class="lmark">
+      <svg viewBox="0 0 17 17" fill="none">
+        <path d="M2 13 L5.5 7.5 L8.5 10 L11.5 5.5 L15 8" stroke="#0d1117" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="15" cy="4.5" r="2" fill="#0d1117"/>
+      </svg>
+    </div>
+    <div><div class="ltxt">PropIQ</div><div class="ltag">Real Estate Calculator</div></div>
+  </div>
+  <div class="csel-wrap">
+    <select class="csel" id="rsel" onchange="setRegion(this.value)">
+      <option value="INR">India — INR (₹)</option>
+      <option value="USD">United States — USD ($)</option>
+      <option value="GBP">United Kingdom — GBP (£)</option>
+      <option value="EUR">Europe — EUR (€)</option>
+      <option value="SGD">Singapore — SGD (S$)</option>
+      <option value="AED">UAE — AED</option>
+      <option value="AUD">Australia — AUD (A$)</option>
+      <option value="CAD">Canada — CAD (C$)</option>
+    </select>
+    <span class="csarr">▾</span>
+  </div>
+</div>
+
+<div class="tabbar">
+  <button class="tab active" onclick="sw('loan')"><svg viewBox="0 0 14 14"><path d="M1 10V5.5L7 1.5l6 4V10H9V8H5v2H1z"/><rect x="4.5" y="8" width="5" height="4"/></svg>Loan &amp; Tax</button>
+  <button class="tab" onclick="sw('yield')"><svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M4.5 9.5l2-4 2 2 2-3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>Rental Yield</button>
+  <button class="tab" onclick="sw('rvb')"><svg viewBox="0 0 14 14"><rect x="1" y="6" width="4" height="6"/><rect x="9" y="4" width="4" height="8"/><path d="M6.5 1.5l2.5 2.5H4L6.5 1.5z"/></svg>Rent vs Buy</button>
+  <button class="tab" onclick="sw('prepay')"><svg viewBox="0 0 14 14"><path d="M2 12V6l5-4 5 4v6"/><rect x="5" y="8" width="4" height="4"/><path d="M11 2.5l1.5-1.5M12.5 4L11 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>Prepayment</button>
+</div>
+
+<!-- LOAN -->
+<div id="p-loan" class="panel active">
+<div class="g2">
+<div class="left-col">
+  <div class="sh">Loan details</div>
+  <div class="fld"><div class="frow"><span class="flbl">Property price</span><div class="cin"><span class="cin-sym" id="sym0">₹</span><input type="number" class="cin-n" id="n-lp" value="8000000" oninput="fn('lp','n-lp');uL()"></div></div><input type="range" id="r-lp" min="500000" max="50000000" step="100000" value="8000000" oninput="fr('lp','r-lp','n-lp');uL()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Down payment</span><div class="pin"><input type="number" class="pin-n" id="n-ld" value="20" min="5" max="50" step="1" oninput="V.ld=+this.value||20;sR('r-ld',V.ld);uL()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-ld" min="5" max="50" step="1" value="20" oninput="V.ld=+this.value;sN('n-ld',V.ld,0);uL()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Interest rate p.a.</span><div class="pin"><input type="number" class="pin-n" id="n-lr" value="8.5" min="1" max="20" step="0.1" oninput="V.lr=+this.value||8.5;sR('r-lr',V.lr);uL()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-lr" min="1" max="20" step="0.1" value="8.5" oninput="V.lr=+this.value;sN('n-lr',V.lr,1);uL()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Tenure</span><div class="pin"><input type="number" class="pin-n" id="n-lt" value="20" min="1" max="30" step="1" oninput="V.lt=+this.value||20;sR('r-lt',V.lt);uL()"><span class="pin-sfx">yr</span></div></div><input type="range" id="r-lt" min="1" max="30" step="1" value="20" oninput="V.lt=+this.value;sN('n-lt',V.lt,0);uL()"></div>
+  <div class="dv"></div>
+  <div class="sh">Buying costs</div>
+  <div id="gst-seg" class="seg"></div>
+  <div class="fld"><div class="frow"><span class="flbl" id="stamp-lbl">Stamp duty</span><div class="pin"><input type="number" class="pin-n" id="n-ls" value="5" min="0" max="25" step="0.5" oninput="V.ls=+this.value||0;sR('r-ls',V.ls);uL()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-ls" min="0" max="25" step="0.5" value="5" oninput="V.ls=+this.value;sN('n-ls',V.ls,1);uL()"></div>
+  <div class="fld"><div class="frow"><span class="flbl" id="reg-lbl">Registration</span><div class="pin"><input type="number" class="pin-n" id="n-lg" value="1" min="0" max="10" step="0.1" oninput="V.lg=+this.value||0;sR('r-lg',V.lg);uL()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-lg" min="0" max="10" step="0.1" value="1" oninput="V.lg=+this.value;sN('n-lg',V.lg,1);uL()"></div>
+  <div id="acq-card" class="acq"></div>
+  <div class="dv"></div>
+  <div class="sh" id="tax-sh">Tax benefits</div>
+  <div id="tax-slab-row" class="fld"><div class="frow"><span class="flbl">Tax bracket</span><div class="pin"><input type="number" class="pin-n" id="n-lsl" value="30" min="0" max="50" step="1" oninput="V.lsl=+this.value||0;sR('r-lsl',V.lsl);uL()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-lsl" min="0" max="50" step="1" value="30" oninput="V.lsl=+this.value;sN('n-lsl',V.lsl,0);uL()"></div>
+  <div id="tax-panel"></div>
+</div>
+<div class="right-col">
+  <div class="sh">EMI summary</div>
+  <div id="loan-m" class="mc mc3"></div>
+  <div class="leg" id="loan-leg"></div>
+  <div class="cw" style="height:170px"><canvas id="lc" role="img" aria-label="Donut principal vs interest">P vs I</canvas></div>
+  <div class="dv"></div>
+  <div class="sh">Annual amortisation</div>
+  <div class="cw" style="height:155px"><canvas id="ac" role="img" aria-label="Amortisation bar">Amort</canvas></div>
+</div>
+</div>
+</div>
+
+<!-- YIELD -->
+<div id="p-yield" class="panel">
+<div class="g2">
+<div class="left-col">
+  <div class="sh">Property details</div>
+  <div class="fld"><div class="frow"><span class="flbl">Property value</span><div class="cin"><span class="cin-sym" id="sym1">₹</span><input type="number" class="cin-n" id="n-yp" value="8000000" oninput="fn('yp','n-yp');uY()"></div></div><input type="range" id="r-yp" min="500000" max="50000000" step="100000" value="8000000" oninput="fr('yp','r-yp','n-yp');uY()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Monthly rent</span><div class="cin"><span class="cin-sym" id="sym2">₹</span><input type="number" class="cin-n" id="n-yr" value="25000" oninput="fn('yr','n-yr');uY()"></div></div><input type="range" id="r-yr" min="1000" max="200000" step="500" value="25000" oninput="fr('yr','r-yr','n-yr');uY()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Annual maintenance</span><div class="cin"><span class="cin-sym" id="sym3">₹</span><input type="number" class="cin-n" id="n-ym" value="50000" oninput="fn('ym','n-ym');uY()"></div></div><input type="range" id="r-ym" min="0" max="500000" step="5000" value="50000" oninput="fr('ym','r-ym','n-ym');uY()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Annual appreciation</span><div class="pin"><input type="number" class="pin-n" id="n-ya" value="5" min="0" max="25" step="0.5" oninput="V.ya=+this.value||0;sR('r-ya',V.ya);uY()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-ya" min="0" max="25" step="0.5" value="5" oninput="V.ya=+this.value;sN('n-ya',V.ya,1);uY()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Vacancy (months/yr)</span><div class="pin"><input type="number" class="pin-n" id="n-yv" value="1" min="0" max="6" step="1" oninput="V.yv=+this.value||0;sR('r-yv',V.yv);uY()"><span class="pin-sfx">mo</span></div></div><input type="range" id="r-yv" min="0" max="6" step="1" value="1" oninput="V.yv=+this.value;sN('n-yv',V.yv,0);uY()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Income tax slab</span><div class="pin"><input type="number" class="pin-n" id="n-ysl" value="30" min="0" max="50" step="1" oninput="V.ysl=+this.value||0;sR('r-ysl',V.ysl);uY()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-ysl" min="0" max="50" step="1" value="30" oninput="V.ysl=+this.value;sN('n-ysl',V.ysl,0);uY()"></div>
+</div>
+<div class="right-col">
+  <div class="sh">Yield summary</div>
+  <div id="yield-m"></div>
+  <div class="leg"><span class="leg-i"><span class="leg-d" style="background:var(--inf)"></span>Property value</span><span class="leg-i"><span class="leg-d" style="background:var(--acc)"></span>Cumulative rental</span></div>
+  <div class="cw" style="height:195px"><canvas id="yc" role="img" aria-label="10yr projection">10yr</canvas></div>
+</div>
+</div>
+</div>
+
+<!-- RVB — fixed -->
+<div id="p-rvb" class="panel">
+<div class="g2">
+<div class="left-col">
+  <div class="sh">Property &amp; loan</div>
+  <div class="fld"><div class="frow"><span class="flbl">Property price</span><div class="cin"><span class="cin-sym" id="sym4">₹</span><input type="number" class="cin-n" id="n-rp" value="8000000" oninput="fn('rp','n-rp');uR()"></div></div><input type="range" id="r-rp" min="500000" max="50000000" step="100000" value="8000000" oninput="fr('rp','r-rp','n-rp');uR()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Down payment</span><div class="pin"><input type="number" class="pin-n" id="n-rd" value="20" min="5" max="50" step="1" oninput="V.rd=+this.value||20;sR('r-rd',V.rd);uR()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-rd" min="5" max="50" step="1" value="20" oninput="V.rd=+this.value;sN('n-rd',V.rd,0);uR()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Home loan rate</span><div class="pin"><input type="number" class="pin-n" id="n-rlr" value="8.5" min="1" max="20" step="0.1" oninput="V.rlr=+this.value||8.5;sR('r-rlr',V.rlr);uR()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-rlr" min="1" max="20" step="0.1" value="8.5" oninput="V.rlr=+this.value;sN('n-rlr',V.rlr,1);uR()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Tenure</span><div class="pin"><input type="number" class="pin-n" id="n-rtn" value="20" min="1" max="30" step="1" oninput="V.rtn=+this.value||20;sR('r-rtn',V.rtn);uR()"><span class="pin-sfx">yr</span></div></div><input type="range" id="r-rtn" min="1" max="30" step="1" value="20" oninput="V.rtn=+this.value;sN('n-rtn',V.rtn,0);uR()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Stamp + registration</span><div class="pin"><input type="number" class="pin-n" id="n-rsd" value="6" min="0" max="25" step="0.5" oninput="V.rsd=+this.value||0;sR('r-rsd',V.rsd);uR()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-rsd" min="0" max="25" step="0.5" value="6" oninput="V.rsd=+this.value;sN('n-rsd',V.rsd,1);uR()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Property appreciation</span><div class="pin"><input type="number" class="pin-n" id="n-rpa" value="5" min="0" max="20" step="0.5" oninput="V.rpa=+this.value||0;sR('r-rpa',V.rpa);uR()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-rpa" min="0" max="20" step="0.5" value="5" oninput="V.rpa=+this.value;sN('n-rpa',V.rpa,1);uR()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Maintenance (% p.a.)</span><div class="pin"><input type="number" class="pin-n" id="n-rmaint" value="0.5" min="0" max="3" step="0.1" oninput="V.rmaint=+this.value||0;sR('r-rmaint',V.rmaint);uR()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-rmaint" min="0" max="3" step="0.1" value="0.5" oninput="V.rmaint=+this.value;sN('n-rmaint',V.rmaint,1);uR()"></div>
+  <div class="dv"></div>
+  <div class="sh">Renting scenario</div>
+  <div class="fld"><div class="frow"><span class="flbl">Monthly rent</span><div class="cin"><span class="cin-sym" id="sym5">₹</span><input type="number" class="cin-n" id="n-rr" value="25000" oninput="fn('rr','n-rr');uR()"></div></div><input type="range" id="r-rr" min="1000" max="200000" step="500" value="25000" oninput="fr('rr','r-rr','n-rr');uR()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Annual rent hike</span><div class="pin"><input type="number" class="pin-n" id="n-rrh" value="5" min="0" max="15" step="0.5" oninput="V.rrh=+this.value||0;sR('r-rrh',V.rrh);uR()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-rrh" min="0" max="15" step="0.5" value="5" oninput="V.rrh=+this.value;sN('n-rrh',V.rrh,1);uR()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Investment return</span><div class="pin"><input type="number" class="pin-n" id="n-rir" value="10" min="0" max="20" step="0.5" oninput="V.rir=+this.value||10;sR('r-rir',V.rir);uR()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-rir" min="0" max="20" step="0.5" value="10" oninput="V.rir=+this.value;sN('n-rir',V.rir,1);uR()"></div>
+</div>
+<div class="right-col">
+  <div id="rvb-verd" class="verd"></div>
+  <div id="rvb-cashflow" class="mc mc2" style="margin-bottom:12px"></div>
+  <div class="assump" id="rvb-assump"></div>
+  <div class="sh">Net worth · 20 years</div>
+  <div class="leg"><span class="leg-i"><span class="leg-d" style="background:var(--inf)"></span>Buy (equity)</span><span class="leg-i"><span class="leg-d" style="background:var(--acc)"></span>Rent + invest</span></div>
+  <div class="cw" style="height:185px"><canvas id="rc" role="img" aria-label="Buy vs rent 20yr">Buy vs Rent</canvas></div>
+  <div class="dv"></div>
+  <div class="sh">Year-1 monthly cashflow</div>
+  <div id="rvb-bars"></div>
+</div>
+</div>
+</div>
+
+<!-- PREPAY -->
+<div id="p-prepay" class="panel">
+<div class="g2">
+<div class="left-col">
+  <div class="sh">Loan details</div>
+  <div class="fld"><div class="frow"><span class="flbl">Loan amount</span><div class="cin"><span class="cin-sym" id="sym6">₹</span><input type="number" class="cin-n" id="n-ppl" value="6400000" oninput="fn('ppl','n-ppl');uPP()"></div></div><input type="range" id="r-ppl" min="100000" max="40000000" step="100000" value="6400000" oninput="fr('ppl','r-ppl','n-ppl');uPP()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Interest rate</span><div class="pin"><input type="number" class="pin-n" id="n-ppr" value="8.5" min="1" max="20" step="0.1" oninput="V.ppr=+this.value||8.5;sR('r-ppr',V.ppr);uPP()"><span class="pin-sfx">%</span></div></div><input type="range" id="r-ppr" min="1" max="20" step="0.1" value="8.5" oninput="V.ppr=+this.value;sN('n-ppr',V.ppr,1);uPP()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">Tenure</span><div class="pin"><input type="number" class="pin-n" id="n-ppt" value="20" min="1" max="30" step="1" oninput="V.ppt=+this.value||20;sR('r-ppt',V.ppt);uPP()"><span class="pin-sfx">yr</span></div></div><input type="range" id="r-ppt" min="1" max="30" step="1" value="20" oninput="V.ppt=+this.value;sN('n-ppt',V.ppt,0);uPP()"></div>
+  <div class="dv"></div>
+  <div class="sh">Prepayment details</div>
+  <div class="fld"><div class="frow"><span class="flbl">Prepay amount</span><div class="cin"><span class="cin-sym" id="sym7">₹</span><input type="number" class="cin-n" id="n-ppa" value="500000" oninput="fn('ppa','n-ppa');uPP()"></div></div><input type="range" id="r-ppa" min="50000" max="10000000" step="50000" value="500000" oninput="fr('ppa','r-ppa','n-ppa');uPP()"></div>
+  <div class="fld"><div class="frow"><span class="flbl">At year</span><div class="pin"><input type="number" class="pin-n" id="n-ppy" value="3" min="1" max="25" step="1" oninput="V.ppy=+this.value||3;sR('r-ppy',V.ppy);uPP()"><span class="pin-sfx">yr</span></div></div><input type="range" id="r-ppy" min="1" max="25" step="1" value="3" oninput="V.ppy=+this.value;sN('n-ppy',V.ppy,0);uPP()"></div>
+  <div class="sh" style="margin-top:4px">Apply benefit as</div>
+  <div class="seg" id="pp-seg">
+    <button class="seg-b active" onclick="setPPT('tenure',this)">Reduce tenure</button>
+    <button class="seg-b" onclick="setPPT('emi',this)">Reduce EMI</button>
+  </div>
+  <div id="pp-m" class="mc mc2"></div>
+  <div class="dv"></div>
+  <div class="sh">Interest comparison</div>
+  <div id="pp-bars"></div>
+</div>
+<div class="right-col">
+  <div class="sh">Loan balance over time</div>
+  <div class="leg"><span class="leg-i"><span class="leg-d" style="background:var(--err)"></span>Original</span><span class="leg-i"><span class="leg-d" style="background:var(--inf)"></span>With prepayment</span></div>
+  <div class="cw" style="height:255px"><canvas id="pc" role="img" aria-label="Prepayment balance">Balance</canvas></div>
+</div>
+</div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const RG={
+  INR:{sym:'₹',r:1,lR:8.5,stD:5,rgD:1,gst:true,gstR:[0,5],tx:'india',sl:30,sLbl:'Stamp duty',rLbl:'Registration'},
+  USD:{sym:'$',r:0.012,lR:7.0,stD:1.5,rgD:0.1,gst:false,tx:'usa',sl:22,sLbl:'Transfer tax',rLbl:'Recording fee'},
+  GBP:{sym:'£',r:0.0094,lR:5.5,stD:0,rgD:0.05,gst:false,tx:'uk',sl:20,sLbl:'SDLT',rLbl:'Land registry'},
+  EUR:{sym:'€',r:0.011,lR:4.5,stD:5,rgD:0.5,gst:false,tx:'eur',sl:25,sLbl:'Transfer tax',rLbl:'Notary/reg'},
+  SGD:{sym:'S$',r:0.016,lR:4.0,stD:0,rgD:0,gst:false,tx:'sgd',sl:7,sLbl:'BSD',rLbl:'Caveat fee'},
+  AED:{sym:'AED\u00a0',r:0.044,lR:5.5,stD:4,rgD:0.25,gst:false,tx:'uae',sl:0,sLbl:'DLD fee',rLbl:'Admin fee'},
+  AUD:{sym:'A$',r:0.018,lR:6.5,stD:4,rgD:0.2,gst:true,gstR:[0,10],tx:'aus',sl:32.5,sLbl:'Stamp duty',rLbl:'Land transfer'},
+  CAD:{sym:'C$',r:0.011,lR:6.5,stD:2,rgD:0.1,gst:false,tx:'can',sl:20.5,sLbl:'LTT',rLbl:'Title insurance'}
+};
+let cur='INR',ppT='tenure',gstP=0;
+const CH={};
+const V={lp:8e6,ld:20,lr:8.5,lt:20,ls:5,lg:1,lsl:30,yp:8e6,yr:25000,ym:50000,ya:5,yv:1,ysl:30,rp:8e6,rd:20,rlr:8.5,rtn:20,rsd:6,rpa:5,rmaint:0.5,rr:25000,rrh:5,rir:10,ppl:6400000,ppr:8.5,ppt:20,ppa:500000,ppy:3};
+const Rg=()=>RG[cur];
+const toD=v=>(+v||0)*Rg().r;
+const frD=v=>(+v||0)/Rg().r;
+function fmt(v,abs=false){const x=abs?Math.abs(toD(v)):toD(v);const s=Rg().sym;if(!isFinite(x)||isNaN(x))return s+'0';if(cur==='INR'){if(x>=10000000)return s+(x/10000000).toFixed(2)+'Cr';if(x>=100000)return s+(x/100000).toFixed(2)+'L';return s+Math.round(x).toLocaleString('en-IN');}if(x>=1000000)return s+(x/1000000).toFixed(2)+'M';if(x>=1000)return s+(x/1000).toFixed(1)+'K';return s+Math.round(x).toLocaleString();}
+function fts(v){const x=toD(v);if(!isFinite(x)||isNaN(x))return '0';const s=Rg().sym;if(cur==='INR'){if(x>=10000000)return s+(x/10000000).toFixed(1)+'Cr';if(x>=100000)return s+(x/100000).toFixed(0)+'L';return s+(x/1000).toFixed(0)+'K';}if(x>=1000000)return s+(x/1000000).toFixed(1)+'M';if(x>=1000)return s+(x/1000).toFixed(0)+'K';return s+Math.round(x);}
+const emiC=(l,r,n)=>{if(!l||!n)return 0;const rv=r/1200;if(!rv)return l/n;return l*rv*Math.pow(1+rv,n)/(Math.pow(1+rv,n)-1);};
+const dch=id=>{if(CH[id]){try{CH[id].destroy();}catch(e){}delete CH[id];}};
+const sR=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v;};
+const sN=(id,v,dp=0)=>{const el=document.getElementById(id);if(el)el.value=parseFloat(v).toFixed(dp);};
+function fr(k,rid,nid){V[k]=+document.getElementById(rid).value||0;const el=document.getElementById(nid);if(el){const d=toD(V[k]);el.value=d>=10?Math.round(d):+d.toFixed(2);}}
+function fn(k,nid){V[k]=frD(+document.getElementById(nid).value||0);const s=document.getElementById('r-'+k);if(s)s.value=V[k];}
+const SYMS=[['lp','sym0'],['yp','sym1'],['yr','sym2'],['ym','sym3'],['rp','sym4'],['rr','sym5'],['ppl','sym6'],['ppa','sym7']];
+function refreshUI(){const s=Rg().sym;SYMS.forEach(([k,sid])=>{const el=document.getElementById(sid);if(el)el.textContent=s;});SYMS.forEach(([k])=>{const el=document.getElementById('n-'+k);if(el){const d=toD(V[k]);el.value=d>=10?Math.round(d):+d.toFixed(2);}});}
+function sw(t){['loan','yield','rvb','prepay'].forEach((n,i)=>{document.querySelectorAll('.tab')[i].classList.toggle('active',n===t);document.getElementById('p-'+n).classList.toggle('active',n===t);});}
+function setPPT(t,btn){ppT=t;document.querySelectorAll('#pp-seg .seg-b').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');uPP();}
+function renderGST(){const reg=Rg(),seg=document.getElementById('gst-seg');if(reg.gst&&reg.gstR){seg.style.display='flex';seg.innerHTML=reg.gstR.map((r,i)=>`<button class="seg-b${i===0?' active':''}" onclick="setGST(${r},this)">${r===0?'Established (0%)':'New build ('+r+'%)'}</button>`).join('');gstP=reg.gstR[0];}else{seg.style.display='none';gstP=0;}}
+function setGST(r,btn){gstP=r;document.querySelectorAll('#gst-seg .seg-b').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');uL();}
+function setRegion(k){cur=k;const reg=Rg();V.lr=reg.lR;V.rlr=reg.lR;V.ppr=reg.lR;V.ls=reg.stD;V.lg=reg.rgD;V.lsl=reg.sl;V.ysl=reg.sl;gstP=0;['lr','rlr','ppr'].forEach(k2=>{sR('r-'+k2,V[k2]);sN('n-'+k2,V[k2],1);});sR('r-ls',V.ls);sN('n-ls',V.ls,1);sR('r-lg',V.lg);sN('n-lg',V.lg,1);sR('r-lsl',V.lsl);sN('n-lsl',V.lsl,0);sR('r-ysl',V.ysl);sN('n-ysl',V.ysl,0);document.getElementById('stamp-lbl').textContent=reg.sLbl;document.getElementById('reg-lbl').textContent=reg.rLbl;renderGST();refreshUI();uL();uY();uR();uPP();}
+const CD={grid:'rgba(255,255,255,0.05)',tick:'#484f58',acc:'#2dd4aa',blue:'#58a6ff',red:'#f85149',green:'#3fb950'};
+const bOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:CD.grid},ticks:{color:CD.tick,font:{size:9,family:"'DM Mono',monospace"},autoSkip:true,maxTicksLimit:10}},y:{grid:{color:CD.grid},ticks:{color:CD.tick,font:{size:9,family:"'DM Mono',monospace"},callback:v=>fts(v)}}}};
+
+function renderTax(loan,price,rate,ten,sl){
+  const tx=Rg().tx;
+  document.getElementById('tax-sh').textContent=tx==='india'?'Tax benefits (old regime)':tx==='uae'?'Tax summary':'Tax considerations';
+  document.getElementById('tax-slab-row').style.display=tx==='uae'?'none':'block';
+  const rv=rate/1200,n=ten*12,e=emiC(loan,rate,n);let bal=loan,y1i=0,y1p=0;
+  for(let m=0;m<12&&bal>0.01;m++){const ip=bal*rv,pp=Math.min(e-ip,bal);y1i+=ip;y1p+=pp;bal-=pp;}
+  let h='';
+  if(tx==='india'){const s24=Math.min(y1i,200000),s80=Math.min(y1p,150000),t24=s24*sl/100,t80=s80*sl/100;h=`<div class="mc mc2"><div class="card ok"><div class="card-l">Sec 24(b) saving</div><div class="card-v">${fmt(t24)}/yr</div><div class="card-s">Interest &le;&#8377;2L</div></div><div class="card ok"><div class="card-l">Sec 80C saving</div><div class="card-v">${fmt(t80)}/yr</div><div class="card-s">Principal &le;&#8377;1.5L</div></div></div><div class="card ca" style="margin-bottom:10px"><div class="card-l">Effective EMI yr 1</div><div class="card-v">${fmt(e-(t24+t80)/12)}/mo</div></div><div class="tnote">Old regime only. TDS on rent above &#8377;2.4L/yr.</div>`;}
+  else if(tx==='usa'){const cap=750000/0.012,ded=loan<=cap?y1i:y1i*(cap/loan),save=ded*sl/100;h=`<div class="mc mc2"><div class="card ok"><div class="card-l">Mortgage interest ded.</div><div class="card-v">${fmt(ded)}/yr</div></div><div class="card ok"><div class="card-l">Tax saving</div><div class="card-v">${fmt(save)}/yr</div></div></div><div class="tnote">Must itemize (Schedule A). SALT capped $10K.</div>`;}
+  else if(tx==='uk'){const pGBP=price*Rg().r;let sd=0;if(pGBP>1500000)sd=33750+(pGBP-1500000)*0.12;else if(pGBP>925000)sd=6250+(pGBP-925000)*0.10;else if(pGBP>250000)sd=(pGBP-250000)*0.05;h=`<div class="mc mc2"><div class="card wn"><div class="card-l">SDLT payable</div><div class="card-v">${fmt(sd/Rg().r)}</div></div><div class="card"><div class="card-l">Effective SDLT</div><div class="card-v">${pGBP>0?((sd/pGBP)*100).toFixed(2):0}%</div></div></div><div class="tnote">0% &le;£250K · 5% to £925K · 10% to £1.5M · 12% above.</div>`;}
+  else if(tx==='sgd'){const pSGD=price*Rg().r;let bsd=pSGD<=180000?pSGD*.01:pSGD<=360000?1800+(pSGD-180000)*.02:pSGD<=1000000?5400+(pSGD-360000)*.03:24600+(pSGD-1000000)*.04;h=`<div class="mc mc2"><div class="card wn"><div class="card-l">BSD payable</div><div class="card-v">${fmt(bsd/Rg().r)}</div></div><div class="card er"><div class="card-l">ABSD (SC 2nd)</div><div class="card-v">${fmt(price*.20)}</div><div class="card-s">60% foreigner</div></div></div><div class="tnote">No mortgage interest deduction for personal income tax in SG.</div>`;}
+  else if(tx==='uae'){h=`<div class="card ok" style="margin-bottom:10px"><div class="card-l">Tax position</div><div class="card-v">Zero personal tax</div><div class="card-s">No income, CGT or inheritance tax</div></div><div class="tnote">Main cost: 4% DLD fee. Annual municipality fee = 5% of rental value.</div>`;}
+  else if(tx==='aus'){const nG=Math.max(0,y1i-V.yr*(12-V.yv)),save=nG*sl/100;h=`<div class="mc mc2"><div class="card ok"><div class="card-l">Negative gearing</div><div class="card-v">${fmt(save)}/yr</div></div><div class="card ok"><div class="card-l">CGT discount</div><div class="card-v">50% (12m+)</div></div></div><div class="tnote">GST 10% on new builds. Stamp duty varies by state.</div>`;}
+  else if(tx==='can'){h=`<div class="card" style="margin-bottom:10px"><div class="card-l">Primary residence</div><div class="card-v">No interest deduction</div><div class="card-s">Rental: full interest deductibility</div></div><div class="tnote">Primary residence fully exempt from CGT. LTT varies by province.</div>`;}
+  else{h=`<div class="card ok" style="margin-bottom:10px"><div class="card-l">Est. deduction saving</div><div class="card-v">${fmt(y1i*sl/100)}/yr</div></div><div class="tnote">Tax treatment varies. Consult a local advisor.</div>`;}
+  document.getElementById('tax-panel').innerHTML=h;
+}
+
+function uL(){
+  const pr=V.lp||8e6,dp=V.ld||20,rate=V.lr||8.5,ten=V.lt||20,st=V.ls||0,rg=V.lg||0,sl=V.lsl||0;
+  const gst=pr*gstP/100,sc=pr*st/100,gc=pr*rg/100,tot=pr+gst+sc+gc;
+  document.getElementById('acq-card').innerHTML=`<div class="acq-l">Total acquisition cost</div><div class="acq-v">${fmt(tot)}</div><div class="acq-s">Base ${fmt(pr)} + GST ${fmt(gst)} + ${Rg().sLbl} ${fmt(sc)} + ${Rg().rLbl} ${fmt(gc)}</div>`;
+  const dpA=pr*dp/100,loan=pr-dpA,n=ten*12,e=emiC(loan,rate,n),tot2=e*n,totInt=Math.max(0,tot2-loan);
+  document.getElementById('loan-m').innerHTML=`<div class="card ca"><div class="card-l">Monthly EMI</div><div class="card-v">${fmt(e)}</div></div><div class="card"><div class="card-l">Loan amount</div><div class="card-v">${fmt(loan)}</div></div><div class="card"><div class="card-l">Down payment</div><div class="card-v">${fmt(dpA)}</div></div><div class="card"><div class="card-l">Total payment</div><div class="card-v">${fmt(tot2)}</div></div><div class="card"><div class="card-l">Total interest</div><div class="card-v">${fmt(totInt)}</div></div><div class="card"><div class="card-l">Interest ratio</div><div class="card-v">${loan>0?((totInt/loan)*100).toFixed(0):0}%</div></div>`;
+  renderTax(loan,pr,rate,ten,sl);
+  dch('ld');const c1=document.getElementById('lc').getContext('2d');
+  CH.ld=new Chart(c1,{type:'doughnut',data:{labels:['Principal','Interest'],datasets:[{data:[Math.round(loan),Math.round(totInt)],backgroundColor:[CD.blue,CD.red],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:i=>' '+fmt(i.raw)}}},cutout:'64%'}});
+  document.getElementById('loan-leg').innerHTML=`<span class="leg-i"><span class="leg-d" style="background:${CD.blue}"></span>Principal ${fmt(loan)}</span><span class="leg-i"><span class="leg-d" style="background:${CD.red}"></span>Interest ${fmt(totInt)}</span>`;
+  const rv=rate/1200,labs=[],pA=[],iA=[];let bal=loan;
+  for(let y=1;y<=ten;y++){let yp=0,yi=0;for(let m=0;m<12&&bal>0.01;m++){const ip=bal*rv,pp=Math.min(e-ip,bal);yi+=ip;yp+=pp;bal-=pp;}labs.push('Y'+y);pA.push(Math.round(yp));iA.push(Math.round(yi));}
+  dch('la');const c2=document.getElementById('ac').getContext('2d');
+  CH.la=new Chart(c2,{type:'bar',data:{labels:labs,datasets:[{data:pA,backgroundColor:CD.blue,stack:'s'},{data:iA,backgroundColor:CD.red,stack:'s'}]},options:{...bOpts,scales:{x:{stacked:true,grid:{color:CD.grid},ticks:{color:CD.tick,font:{size:9},autoSkip:true,maxTicksLimit:10}},y:{stacked:true,grid:{color:CD.grid},ticks:{color:CD.tick,font:{size:9},callback:v=>fts(v)}}}}});
+}
+
+function uY(){
+  const prop=V.yp||8e6,rent=V.yr||25000,maint=V.ym||0,appr=V.ya||0,vac=V.yv||0,sl=V.ysl||0;
+  const annR=rent*(12-vac),gross=prop>0?(annR/prop)*100:0,netR=annR-maint,net=prop>0?(netR/prop)*100:0;
+  const postTaxR=netR-Math.max(0,netR*0.7*sl/100),postTax=prop>0?(postTaxR/prop)*100:0,total=postTax+appr;
+  const gc=gross>=4?'ok':gross>=2?'ca':'wn',nc=net>=3?'ok':net>=1.5?'ca':'wn',tc=total>=10?'ok':total>=6?'ca':'wn';
+  document.getElementById('yield-m').innerHTML=`<div class="mc mc2"><div class="card ${gc}"><div class="card-l">Gross yield</div><div class="card-v">${gross.toFixed(2)}%</div></div><div class="card ${nc}"><div class="card-l">Net yield</div><div class="card-v">${net.toFixed(2)}%</div><div class="card-s">After maintenance</div></div><div class="card"><div class="card-l">Post-tax yield</div><div class="card-v">${postTax.toFixed(2)}%</div></div><div class="card ${tc}"><div class="card-l">Total return</div><div class="card-v">${total.toFixed(2)}%</div><div class="card-s">Yield + appreciation</div></div></div><div class="mc mc2" style="margin-bottom:12px"><div class="card"><div class="card-l">Annual net rent</div><div class="card-v">${fmt(netR)}</div></div><div class="card"><div class="card-l">Post-tax income</div><div class="card-v">${fmt(postTaxR)}</div></div></div>`;
+  dch('yc');const labs=[],pv=[],cv=[];let p=prop,cr=0,r2=rent;
+  for(let y=0;y<=10;y++){labs.push('Y'+y);pv.push(Math.round(p));cv.push(Math.round(Math.max(0,cr)));if(y<10){cr+=Math.max(0,r2*(12-vac)-maint);p*=(1+appr/100);r2*=1.05;}}
+  const ctx=document.getElementById('yc').getContext('2d');
+  CH.yc=new Chart(ctx,{type:'line',data:{labels:labs,datasets:[{data:pv,borderColor:CD.blue,backgroundColor:'rgba(88,166,255,0.08)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:CD.blue},{data:cv,borderColor:CD.acc,backgroundColor:'rgba(45,212,170,0.08)',fill:true,tension:.4,pointRadius:3,borderDash:[5,4],pointBackgroundColor:CD.acc}]},options:{...bOpts}});
+}
+
+/*
+  ═══════════════════════════════════════════════════════════
+  FIXED RENT vs BUY CALCULATION
+  ═══════════════════════════════════════════════════════════
+
+  MODEL:
+  Both buyer and renter start with the same lump sum available
+  = down payment + stamp/reg costs.
+
+  BUYER:
+  - Puts (down payment + stamp+reg) into the property upfront
+  - Pays EMI + maintenance every month
+  - Owns property that appreciates
+  - Net worth = property value − remaining loan
+
+  RENTER:
+  - Invests the (down payment + stamp+reg) into a market portfolio
+  - Pays rent every month
+  - Monthly delta = buyerMonthlyCost − rent (can be + or -)
+    · If positive: renter has leftover cash vs buyer → invests it
+    · If negative: rent costs MORE than buying → renter draws down savings
+  - Net worth = portfolio value
+
+  BUG THAT WAS FIXED:
+  Old code: rp += Math.max(0, buyMo - rent)
+  → When rent > EMI, delta was clamped to 0, making renter's
+    portfolio grow as if they had free money. Wrong.
+  Fix:      rp += (buyMo - rent)   ← free-flowing delta, can be negative
+  ═══════════════════════════════════════════════════════════
+*/
+function uR(){
+  const pr=V.rp||8e6,dp=V.rd||20,lr=V.rlr||8.5,ten=V.rtn||20,sd=V.rsd||0,pa=V.rpa||0;
+  const maintPct=(V.rmaint||0.5)/100;
+  const r0=V.rr||25000,rh=V.rrh||0,inv=V.rir||10;
+
+  const dpA=pr*dp/100;                      // down payment cash
+  const sdA=pr*sd/100;                      // stamp + reg cost (buyer pays, renter saves)
+  const loan=pr-dpA;
+  const n=ten*12;
+  const emiMo=emiC(loan,lr,n);             // fixed monthly EMI
+  const maintMo=pr*maintPct/12;            // monthly maintenance (buyer only)
+  const buyMo=emiMo+maintMo;              // total buyer monthly cost
+
+  // Renter invests the same lump sum the buyer spent upfront
+  const renterInit=dpA+sdA;
+
+  const rv=lr/1200;
+  const invMo=inv/1200;
+
+  const labs=[],bNW=[],rNW=[];
+  let propVal=pr, loanBal=loan;
+  let rPort=renterInit;                    // renter's portfolio
+  let rent=r0;
+  let bev=-1;
+
+  for(let y=0;y<=20;y++){
+    const buyEquity=propVal-Math.max(0,loanBal);
+    labs.push('Y'+y);
+    bNW.push(Math.round(buyEquity));
+    rNW.push(Math.round(rPort));
+    if(y>0&&buyEquity>rPort&&bev<0)bev=y;
+
+    if(y<20){
+      for(let m=0;m<12;m++){
+        // buyer: pay down loan
+        if(loanBal>0.01){
+          const ip=loanBal*rv;
+          const pp=Math.min(emiMo-ip,loanBal);
+          loanBal=Math.max(0,loanBal-pp);
+        }
+        // renter: portfolio grows at inv rate then adjust for cash flow delta
+        // delta = how much MORE the buyer spends vs renter this month
+        // positive → renter saves & invests the difference
+        // negative → rent costs more, renter draws from portfolio
+        rPort*=(1+invMo);
+        rPort+=(buyMo-rent);               // ← FIXED: no Max(0,...) clamp
+      }
+      propVal*=(1+pa/100);
+      rent*=(1+rh/100);
+    }
+  }
+
+  const fB=bNW[20],fR=rNW[20],bw=fB>fR,diff=Math.abs(fB-fR);
+  const crossMsg=bev>0?`Buy overtakes renting at year ${bev}`:'Renting portfolio stays larger throughout 20 years';
+
+  document.getElementById('rvb-verd').innerHTML=`
+    <div class="verd-tag">20-year verdict</div>
+    <div class="verd-val" style="color:${bw?CD.green:CD.acc}">${bw?'Buying':'Renting + investing'} wins by ${fmt(diff,true)}</div>
+    <div class="verd-sub">${crossMsg} &nbsp;&middot;&nbsp; EMI ${fmt(emiMo)}/mo &nbsp;&middot;&nbsp; Stamp/reg ${fmt(sdA)}</div>`;
+
+  // cashflow cards
+  const delta=buyMo-r0;
+  const deltaClass=delta>0?'ca':'wn';
+  document.getElementById('rvb-cashflow').innerHTML=`
+    <div class="card"><div class="card-l">Buyer monthly (yr 1)</div><div class="card-v">${fmt(buyMo)}</div><div class="card-s">EMI + ${(maintPct*100).toFixed(1)}% maint.</div></div>
+    <div class="card ${deltaClass}"><div class="card-l">Renter monthly delta</div><div class="card-v">${delta>=0?'+':'-'}${fmt(Math.abs(delta))}</div><div class="card-s">${delta>=0?'Renter invests this extra':'Renter pays this extra'}</div></div>`;
+
+  document.getElementById('rvb-assump').innerHTML=`<strong>How this is modelled:</strong> Both start with the same ${fmt(renterInit)} (down payment + buying costs). Buyer pays EMI + maintenance; renter pays rent and invests the monthly difference — positive or negative — into a portfolio earning ${inv}% p.a. Property appreciates at ${pa}% p.a.; rent rises ${rh}% p.a.`;
+
+  dch('rc');const ctx=document.getElementById('rc').getContext('2d');
+  CH.rc=new Chart(ctx,{type:'line',data:{labels:labs,datasets:[{data:bNW,borderColor:CD.blue,backgroundColor:'rgba(88,166,255,0.08)',fill:true,tension:.4,pointRadius:2,pointBackgroundColor:CD.blue},{data:rNW,borderColor:CD.acc,backgroundColor:'rgba(45,212,170,0.08)',fill:true,tension:.4,pointRadius:2,borderDash:[5,4],pointBackgroundColor:CD.acc}]},options:{...bOpts}});
+
+  const mx=Math.max(buyMo,r0,1);
+  document.getElementById('rvb-bars').innerHTML=`
+    <div class="brow"><span class="blbl">EMI</span><div class="btrack"><div class="bfill" style="width:${Math.min(100,(emiMo/mx)*100).toFixed(0)}%;background:${CD.blue}"></div></div><span class="bval">${fmt(emiMo)}/mo</span></div>
+    <div class="brow"><span class="blbl">Maintenance</span><div class="btrack"><div class="bfill" style="width:${Math.min(100,(maintMo/mx)*100).toFixed(0)}%;background:#8b949e"></div></div><span class="bval">${fmt(maintMo)}/mo</span></div>
+    <div class="brow"><span class="blbl">Rent (year 1)</span><div class="btrack"><div class="bfill" style="width:${Math.min(100,(r0/mx)*100).toFixed(0)}%;background:${CD.acc}"></div></div><span class="bval">${fmt(r0)}/mo</span></div>`;
+}
+
+function uPP(){
+  const la=V.ppl||6400000,rate=V.ppr||8.5,ten=V.ppt||20,ppA=Math.min(V.ppa||500000,la*0.98),ppY=Math.max(1,Math.min(V.ppy||3,ten-1));
+  const rv=rate/1200,n=ten*12,e=emiC(la,rate,n);
+  const oB=[la];let bal=la,oI=0;
+  for(let m=1;m<=n;m++){if(bal<=0.01)break;const ip=bal*rv,pp=Math.min(e-ip,bal);oI+=ip;bal-=pp;if(m%12===0)oB.push(Math.max(0,Math.round(bal)));}
+  while(oB.length<=ten)oB.push(0);
+  const pB=[la];bal=la;let done=false,cE=e,pI=0,finM=n,nE=e;
+  for(let m=1;m<=n;m++){if(!done&&m===ppY*12){bal=Math.max(0,bal-ppA);done=true;if(ppT==='emi'){const rm=n-m;nE=rm>0&&bal>0.01?emiC(bal,rate,rm):0;cE=nE;}}if(bal<=0.01){finM=m;break;}const ip=bal*rv,pp=Math.min(cE-ip,bal);pI+=ip;bal-=pp;if(m%12===0)pB.push(Math.max(0,Math.round(bal)));if(bal<=0.01){finM=m;break;}}
+  while(pB.length<oB.length)pB.push(0);pB.length=oB.length;
+  const iSv=Math.max(0,oI-pI),tSv=ppT==='tenure'?ten-finM/12:0,eRed=ppT==='emi'?e-nE:0;
+  document.getElementById('pp-m').innerHTML=`<div class="card"><div class="card-l">Original EMI</div><div class="card-v">${fmt(e)}</div></div><div class="card ca"><div class="card-l">${ppT==='emi'?'New EMI':'New tenure'}</div><div class="card-v">${ppT==='emi'?fmt(nE):(finM/12).toFixed(1)+' yrs'}</div></div><div class="card ok"><div class="card-l">Interest saved</div><div class="card-v">${fmt(iSv)}</div></div><div class="card ok"><div class="card-l">${ppT==='tenure'?'Years saved':'EMI reduction'}</div><div class="card-v">${ppT==='tenure'?tSv.toFixed(1)+' yrs':fmt(eRed)+'/mo'}</div></div>`;
+  const mx2=oI||1;
+  document.getElementById('pp-bars').innerHTML=`<div class="brow"><span class="blbl">Original interest</span><div class="btrack"><div class="bfill" style="width:100%;background:${CD.red}"></div></div><span class="bval">${fmt(oI)}</span></div><div class="brow"><span class="blbl">After prepayment</span><div class="btrack"><div class="bfill" style="width:${Math.max(0,100-iSv/mx2*100).toFixed(0)}%;background:${CD.blue}"></div></div><span class="bval">${fmt(pI)}</span></div><div class="brow"><span class="blbl">Interest saved</span><div class="btrack"><div class="bfill" style="width:${Math.min(100,iSv/mx2*100).toFixed(0)}%;background:${CD.green}"></div></div><span class="bval">${fmt(iSv)}</span></div>`;
+  dch('pc');const labs=Array.from({length:oB.length},(_,i)=>'Y'+i);
+  const ctx=document.getElementById('pc').getContext('2d');
+  CH.pc=new Chart(ctx,{type:'line',data:{labels:labs,datasets:[{data:oB,borderColor:CD.red,backgroundColor:'rgba(248,81,73,0.07)',fill:true,tension:.3,pointRadius:2,pointBackgroundColor:CD.red},{data:pB,borderColor:CD.blue,backgroundColor:'rgba(88,166,255,0.08)',fill:true,tension:.3,pointRadius:2,borderDash:[5,4],pointBackgroundColor:CD.blue}]},options:{...bOpts,scales:{x:{grid:{color:CD.grid},ticks:{color:CD.tick,font:{size:9},autoSkip:true,maxTicksLimit:11}},y:{min:0,grid:{color:CD.grid},ticks:{color:CD.tick,font:{size:9},callback:v=>fts(v)}}}}});
+}
+
+renderGST();refreshUI();uL();uY();uR();uPP();
+</script>
